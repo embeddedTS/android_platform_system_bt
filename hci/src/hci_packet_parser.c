@@ -48,10 +48,11 @@ static void parse_read_buffer_size_response(
     uint16_t *acl_buffer_count_ptr) {
 
   uint8_t *stream = read_command_complete_header(response, HCI_READ_BUFFER_SIZE, 5 /* bytes after */);
-  assert(stream != NULL);
-  STREAM_TO_UINT16(*data_size_ptr, stream);
-  STREAM_SKIP_UINT8(stream); // skip the sco packet length
-  STREAM_TO_UINT16(*acl_buffer_count_ptr, stream);
+  if(stream != NULL){
+    STREAM_TO_UINT16(*data_size_ptr, stream);
+    STREAM_SKIP_UINT8(stream); // skip the sco packet length
+    STREAM_TO_UINT16(*acl_buffer_count_ptr, stream);
+  }
 
   buffer_allocator->free(response);
 }
@@ -61,12 +62,13 @@ static void parse_read_local_version_info_response(
     bt_version_t *bt_version) {
 
   uint8_t *stream = read_command_complete_header(response, HCI_READ_LOCAL_VERSION_INFO, 8 /* bytes after */);
-  assert(stream != NULL);
-  STREAM_TO_UINT8(bt_version->hci_version, stream);
-  STREAM_TO_UINT16(bt_version->hci_revision, stream);
-  STREAM_TO_UINT8(bt_version->lmp_version, stream);
-  STREAM_TO_UINT16(bt_version->manufacturer, stream);
-  STREAM_TO_UINT16(bt_version->lmp_subversion, stream);
+  if(stream != NULL) {
+    STREAM_TO_UINT8(bt_version->hci_version, stream);
+    STREAM_TO_UINT16(bt_version->hci_revision, stream);
+    STREAM_TO_UINT8(bt_version->lmp_version, stream);
+    STREAM_TO_UINT16(bt_version->manufacturer, stream);
+    STREAM_TO_UINT16(bt_version->lmp_subversion, stream);
+  }
 
   buffer_allocator->free(response);
 }
@@ -93,8 +95,8 @@ static void parse_read_bd_addr_response(
     bt_bdaddr_t *address_ptr) {
 
   uint8_t *stream = read_command_complete_header(response, HCI_READ_BD_ADDR, sizeof(bt_bdaddr_t) /* bytes after */);
-  assert(stream != NULL);
-  STREAM_TO_BDADDR(address_ptr->address, stream);
+  if(stream != NULL)
+    STREAM_TO_BDADDR(address_ptr->address, stream);
 
   buffer_allocator->free(response);
 }
@@ -105,8 +107,8 @@ static void parse_read_local_supported_commands_response(
     size_t supported_commands_length) {
 
   uint8_t *stream = read_command_complete_header(response, HCI_READ_LOCAL_SUPPORTED_CMDS, supported_commands_length /* bytes after */);
-  assert(stream != NULL);
-  STREAM_TO_ARRAY(supported_commands_ptr, stream, (int)supported_commands_length);
+  if(stream != NULL)
+    STREAM_TO_ARRAY(supported_commands_ptr, stream, (int)supported_commands_length);
 
   buffer_allocator->free(response);
 }
@@ -138,8 +140,8 @@ static void parse_ble_read_white_list_size_response(
     uint8_t *white_list_size_ptr) {
 
   uint8_t *stream = read_command_complete_header(response, HCI_BLE_READ_WHITE_LIST_SIZE, 1 /* byte after */);
-  assert(stream != NULL);
-  STREAM_TO_UINT8(*white_list_size_ptr, stream);
+  if(stream != NULL)
+    STREAM_TO_UINT8(*white_list_size_ptr, stream);
 
   buffer_allocator->free(response);
 }
@@ -150,9 +152,10 @@ static void parse_ble_read_buffer_size_response(
     uint8_t *acl_buffer_count_ptr) {
 
   uint8_t *stream = read_command_complete_header(response, HCI_BLE_READ_BUFFER_SIZE, 3 /* bytes after */);
-  assert(stream != NULL);
-  STREAM_TO_UINT16(*data_size_ptr, stream);
-  STREAM_TO_UINT8(*acl_buffer_count_ptr, stream);
+  if(stream != NULL) {
+    STREAM_TO_UINT16(*data_size_ptr, stream);
+    STREAM_TO_UINT8(*acl_buffer_count_ptr, stream);
+  }
 
   buffer_allocator->free(response);
 }
@@ -163,8 +166,8 @@ static void parse_ble_read_supported_states_response(
     size_t supported_states_size) {
 
   uint8_t *stream = read_command_complete_header(response, HCI_BLE_READ_SUPPORTED_STATES, supported_states_size /* bytes after */);
-  assert(stream != NULL);
-  STREAM_TO_ARRAY(supported_states, stream, (int)supported_states_size);
+  if(stream != NULL)
+    STREAM_TO_ARRAY(supported_states, stream, (int)supported_states_size);
 
   buffer_allocator->free(response);
 }
@@ -174,8 +177,8 @@ static void parse_ble_read_local_supported_features_response(
     bt_device_features_t *supported_features) {
 
   uint8_t *stream = read_command_complete_header(response, HCI_BLE_READ_LOCAL_SPT_FEAT, sizeof(bt_device_features_t) /* bytes after */);
-  assert(stream != NULL);
-  STREAM_TO_ARRAY(supported_features->as_array, stream, (int)sizeof(bt_device_features_t));
+  if(stream != NULL)
+    STREAM_TO_ARRAY(supported_features->as_array, stream, (int)sizeof(bt_device_features_t));
 
   buffer_allocator->free(response);
 }
@@ -219,7 +222,13 @@ static uint8_t *read_command_complete_header(
 
   // Check the event header values against what we expect
   assert(event_code == HCI_COMMAND_COMPLETE_EVT);
-  assert(parameter_length >= (parameter_bytes_we_read_here + minimum_bytes_after));
+  if(!(parameter_length >= (parameter_bytes_we_read_here + minimum_bytes_after)))
+  {
+    LOG_ERROR(LOG_TAG, "%s: Unexpected parameter length %d, %d", __func__,
+      parameter_length,
+      parameter_bytes_we_read_here + minimum_bytes_after);
+    return NULL;
+  }
 
   // Read the command complete header
   command_opcode_t opcode;

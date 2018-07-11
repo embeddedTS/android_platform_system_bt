@@ -99,7 +99,7 @@ static const clockid_t CLOCK_ID = CLOCK_BOOTTIME;
 #if defined(KERNEL_MISSING_CLOCK_BOOTTIME_ALARM) && (KERNEL_MISSING_CLOCK_BOOTTIME_ALARM == TRUE)
 static const clockid_t CLOCK_ID_ALARM = CLOCK_BOOTTIME;
 #else
-static const clockid_t CLOCK_ID_ALARM = CLOCK_BOOTTIME_ALARM;
+static const clockid_t CLOCK_ID_ALARM = CLOCK_BOOTTIME;
 #endif
 
 // This mutex ensures that the |alarm_set|, |alarm_cancel|, and alarm callback

@@ -312,13 +312,13 @@ static uint8_t *get_local_supported_codecs(uint8_t *number_of_codecs) {
 
 static const bt_device_features_t *get_features_ble(void) {
   assert(readable);
-  assert(ble_supported);
+  /*assert(ble_supported);*/
   return &features_ble;
 }
 
 static const uint8_t *get_ble_supported_states(void) {
   assert(readable);
-  assert(ble_supported);
+  /*assert(ble_supported);*/
   return ble_supported_states;
 }
 
@@ -369,19 +369,19 @@ static bool supports_ble(void) {
 
 static bool supports_ble_privacy(void) {
   assert(readable);
-  assert(ble_supported);
+  /*assert(ble_supported);*/
   return HCI_LE_ENHANCED_PRIVACY_SUPPORTED(features_ble.as_array);
 }
 
 static bool supports_ble_packet_extension(void) {
   assert(readable);
-  assert(ble_supported);
+  /*assert(ble_supported);*/
   return HCI_LE_DATA_LEN_EXT_SUPPORTED(features_ble.as_array);
 }
 
 static bool supports_ble_connection_parameters_request(void) {
   assert(readable);
-  assert(ble_supported);
+  /*assert(ble_supported);*/
   return HCI_LE_CONN_PARAM_REQ_SUPPORTED(features_ble.as_array);
 }
 
@@ -392,7 +392,7 @@ static uint16_t get_acl_data_size_classic(void) {
 
 static uint16_t get_acl_data_size_ble(void) {
   assert(readable);
-  assert(ble_supported);
+  /*assert(ble_supported);*/
   return acl_data_size_ble;
 }
 
@@ -408,7 +408,7 @@ static uint16_t get_acl_packet_size_ble(void) {
 
 static uint16_t get_ble_suggested_default_data_length(void) {
   assert(readable);
-  assert(ble_supported);
+  /*assert(ble_supported);*/
   return ble_suggested_default_data_length;
 }
 
@@ -419,19 +419,19 @@ static uint16_t get_acl_buffer_count_classic(void) {
 
 static uint8_t get_acl_buffer_count_ble(void) {
   assert(readable);
-  assert(ble_supported);
+  /*assert(ble_supported);*/
   return acl_buffer_count_ble;
 }
 
 static uint8_t get_ble_white_list_size(void) {
   assert(readable);
-  assert(ble_supported);
+  /*assert(ble_supported);*/
   return ble_white_list_size;
 }
 
 static uint8_t get_ble_resolving_list_max_size(void) {
   assert(readable);
-  assert(ble_supported);
+  /*assert(ble_supported);*/
   return ble_resolving_list_max_size;
 }
 
@@ -441,7 +441,7 @@ static void set_ble_resolving_list_max_size(int resolving_list_max_size) {
   if (resolving_list_max_size != 0) {
     assert(readable);
   }
-  assert(ble_supported);
+  /*assert(ble_supported);*/
   ble_resolving_list_max_size = resolving_list_max_size;
 }
 
